@@ -12,7 +12,7 @@ public class PlayerController : MonoBehaviour
     private Vector2 input = Vector2.zero;
     public string currentGround;
     public bool hasToCrouch;
-    public bool canClimb;
+    public bool canClimbLedge;
     public bool canWalk = true;
 
     private Rigidbody2D currBox;
@@ -118,7 +118,7 @@ public class PlayerController : MonoBehaviour
         {
             if (!animator.GetBool("IsCrouching"))
             {
-                if (canClimb)
+                if (canClimbLedge)
                 {
                     canWalk = false;
                     animator.SetInteger("PlayerState", (int)PlayerState.HoldingLedge);
@@ -132,7 +132,7 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            if (canClimb && animator.GetInteger("PlayerState") == (int)PlayerState.HoldingLedge)
+            if (canClimbLedge && animator.GetInteger("PlayerState") == (int)PlayerState.HoldingLedge)
             {
                 StartCoroutine("ClimbLedge");
             }
@@ -161,7 +161,7 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                canClimb = true;
+                canClimbLedge = true;
             }
         }
         else if (collision.gameObject.CompareTag("Box"))
@@ -192,11 +192,11 @@ public class PlayerController : MonoBehaviour
             {
                 currentGround = "";
                 canWalk = false;
-                animator.SetBool("IsGrounded", canClimb);
+                animator.SetBool("IsGrounded", canClimbLedge);
             }
             else
             {
-                canClimb = false;
+                canClimbLedge = false;
             }
         }
         else if (collision.gameObject.CompareTag("Box"))
@@ -206,7 +206,7 @@ public class PlayerController : MonoBehaviour
             if (currentGround == collision.collider.name)
             {
                 currentGround = "";
-                animator.SetBool("IsGrounded", canClimb);
+                animator.SetBool("IsGrounded", canClimbLedge);
             }
 
             collision.rigidbody.bodyType = RigidbodyType2D.Dynamic;
@@ -217,7 +217,7 @@ public class PlayerController : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Ladder"))
         {
-            canClimb = true;
+            //canClimbLedge = true;
         }
         else if (collision.gameObject.CompareTag("Tunnel"))
         {
@@ -229,7 +229,7 @@ public class PlayerController : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Ladder"))
         {
-            canClimb = false;
+            //canClimbLedge = false;
         }
         else if (collision.gameObject.CompareTag("Tunnel"))
         {
@@ -256,8 +256,6 @@ public class PlayerController : MonoBehaviour
         BoxCollider2D coll = transform.GetComponent<BoxCollider2D>();
         coll.enabled = false;
 
-        //body.gravityScale = 0f;
-
         float time = 0f;
         Vector2 startPosition = transform.position;
         Vector2 targetPosition = startPosition + Vector2.up * 0.75f;
@@ -281,7 +279,7 @@ public class PlayerController : MonoBehaviour
         }
 
         canWalk = true;
-        canClimb = false;
+        canClimbLedge = false;
         coll.enabled = true;
         //body.gravityScale = 1f;
     }

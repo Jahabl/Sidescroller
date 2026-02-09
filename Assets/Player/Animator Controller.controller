@@ -287,7 +287,7 @@ AnimatorStateMachine:
     m_Position: {x: -200, y: 100, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -4001624125370283665}
-    m_Position: {x: 100, y: -200, z: 0}
+    m_Position: {x: 100, y: 100, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -830112607396594305}
     m_Position: {x: -200, y: -200, z: 0}
@@ -311,7 +311,7 @@ AnimatorStateMachine:
     m_Position: {x: -600, y: 260, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 3306680733198219580}
-    m_Position: {x: -700, y: 360, z: 0}
+    m_Position: {x: -800, y: 360, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -6804636756804483282}
     m_Position: {x: -800, y: 200, z: 0}
@@ -327,7 +327,7 @@ AnimatorStateMachine:
   m_EntryTransitions: []
   m_StateMachineTransitions: {}
   m_StateMachineBehaviours: []
-  m_AnyStatePosition: {x: 120, y: -100, z: 0}
+  m_AnyStatePosition: {x: 300, y: 0, z: 0}
   m_EntryPosition: {x: -740, y: 100, z: 0}
   m_ExitPosition: {x: 800, y: 120, z: 0}
   m_ParentStateMachinePosition: {x: 800, y: 20, z: 0}
@@ -590,7 +590,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Land
+  m_Name: Land Stand
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
