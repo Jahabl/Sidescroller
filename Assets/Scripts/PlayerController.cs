@@ -1,20 +1,19 @@
+using System.Collections;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private Rigidbody2D body;
     [SerializeField] private Animator animator;
+    [SerializeField] private AnimationClip climb;
 
     [SerializeField] private float topSpeed = 3f;
     [SerializeField] private float bottomSpeed = 1f;
     private Vector2 input = Vector2.zero;
-    private string currentGround;
-    private bool IsCrouching;
-    private bool hasToCrouch;
-    private bool canClimb;
-    private bool isClimbing;
-    private bool isPushing;
-    public bool canWalk;
+    public string currentGround;
+    public bool hasToCrouch;
+    public bool canClimb;
+    public bool canWalk = true;
 
     private Rigidbody2D currBox;
 
@@ -51,7 +50,7 @@ public class PlayerController : MonoBehaviour
         {
             if (canWalk)
             {
-                if (isPushing || IsCrouching)
+                if (animator.GetBool("IsPushing") || animator.GetBool("IsCrouching"))
                 {
                     body.velocity = input * bottomSpeed;
                 }
@@ -69,75 +68,83 @@ public class PlayerController : MonoBehaviour
 
     public void HandleLeftInput(bool wasCancelled)
     {
+        Debug.Log("L");
+
         if (!wasCancelled)
         {
             input.x = -1f;
             transform.localScale = new Vector3(-1f, 1f, 1f);
-            animator.SetBool("IsWalking", true);
+            animator.SetInteger("PlayerState", (int)PlayerState.Walking);
         }
         else
         {
-            input.x = 0f;
-            animator.SetBool("IsWalking", false);
+            if (input.x == -1f)
+            {
+                input.x = 0f;
+                animator.SetInteger("PlayerState", (int)PlayerState.Idling);
+            }
 
-            isPushing = false;
             animator.SetBool("IsPushing", false);
         }
     }
 
     public void HandleRightInput(bool wasCancelled)
     {
+        Debug.Log("R");
+
         if (!wasCancelled)
         {
             input.x = 1f;
             transform.localScale = Vector3.one;
-            animator.SetBool("IsWalking", true);
+            animator.SetInteger("PlayerState", (int)PlayerState.Walking);
         }
         else
         {
-            input.x = 0f;
-            animator.SetBool("IsWalking", false);
+            if (input.x == 1f)
+            {
+                input.x = 0f;
+                animator.SetInteger("PlayerState", (int)PlayerState.Idling);
+            }
 
-            isPushing = false;
             animator.SetBool("IsPushing", false);
         }
     }
 
     public void HandleActionInput(bool wasCancelled)
     {
-        if (!wasCancelled)
+        Debug.Log("X");
+
+        if (!wasCancelled && canWalk)
         {
-            /*if (canClimb)
+            if (!animator.GetBool("IsCrouching"))
             {
-                isClimbing = true;
-                body.gravityScale = 0f;
-            }
-            else */if (!isPushing)
-            {
-                canWalk = !hasToCrouch;
-                IsCrouching = true;
-                animator.SetBool("IsCrouching", true);
+                if (canClimb)
+                {
+                    canWalk = false;
+                    animator.SetInteger("PlayerState", (int)PlayerState.HoldingLedge);
+                }
+                else if (!animator.GetBool("IsPushing"))
+                {
+                    canWalk = !hasToCrouch;
+                    animator.SetBool("IsCrouching", true);
+                }
             }
         }
         else
         {
-            canWalk = true;
-
-            if (canClimb)
+            if (canClimb && animator.GetInteger("PlayerState") == (int)PlayerState.HoldingLedge)
             {
-                /*body.gravityScale = 1f;*/
+                StartCoroutine("ClimbLedge");
             }
-            else if (!hasToCrouch)
+            else if (!hasToCrouch && canWalk)
             {
-                if (currBox != null)
+                if (currBox != null && animator.GetInteger("PlayerState") == (int)PlayerState.Walking)
                 {
                     currBox.bodyType = RigidbodyType2D.Dynamic;
 
-                    isPushing = true;
                     animator.SetBool("IsPushing", true);
                 }
 
-                IsCrouching = false;
                 animator.SetBool("IsCrouching", false);
             }
         }
@@ -150,12 +157,11 @@ public class PlayerController : MonoBehaviour
             if (collision.GetContact(0).normal == Vector2.up)
             {
                 currentGround = collision.collider.name;
-                canWalk = true;
                 animator.SetBool("IsGrounded", true);
             }
             else
             {
-                Debug.Log("CAN CLIMB");
+                canClimb = true;
             }
         }
         else if (collision.gameObject.CompareTag("Box"))
@@ -165,12 +171,10 @@ public class PlayerController : MonoBehaviour
             if (collision.GetContact(0).normal == Vector2.up)
             {
                 currentGround = collision.collider.name;
-                canWalk = true;
                 animator.SetBool("IsGrounded", true);
             }
-            else if (!IsCrouching)
+            else if (!animator.GetBool("IsCrouching"))
             {
-                isPushing = true;
                 animator.SetBool("IsPushing", true);
             }
             else
@@ -187,11 +191,12 @@ public class PlayerController : MonoBehaviour
             if (currentGround == collision.collider.name)
             {
                 currentGround = "";
-                animator.SetBool("IsGrounded", false);
+                canWalk = false;
+                animator.SetBool("IsGrounded", canClimb);
             }
             else
             {
-                Debug.Log("NO CLIMB");
+                canClimb = false;
             }
         }
         else if (collision.gameObject.CompareTag("Box"))
@@ -201,7 +206,7 @@ public class PlayerController : MonoBehaviour
             if (currentGround == collision.collider.name)
             {
                 currentGround = "";
-                animator.SetBool("IsGrounded", false);
+                animator.SetBool("IsGrounded", canClimb);
             }
 
             collision.rigidbody.bodyType = RigidbodyType2D.Dynamic;
@@ -225,7 +230,6 @@ public class PlayerController : MonoBehaviour
         if (collision.gameObject.CompareTag("Ladder"))
         {
             canClimb = false;
-            isClimbing = false;
         }
         else if (collision.gameObject.CompareTag("Tunnel"))
         {
@@ -236,5 +240,49 @@ public class PlayerController : MonoBehaviour
     public void ToggleWalk(int canWalk)
     {
         this.canWalk = canWalk == 1;
+    }
+
+    IEnumerator ClimbLedge()
+    {
+        if (input.x != 0)
+        {
+            animator.SetInteger("PlayerState", (int)PlayerState.Walking);
+        }
+        else
+        {
+            animator.SetInteger("PlayerState", (int)PlayerState.Idling);
+        }
+
+        BoxCollider2D coll = transform.GetComponent<BoxCollider2D>();
+        coll.enabled = false;
+
+        //body.gravityScale = 0f;
+
+        float time = 0f;
+        Vector2 startPosition = transform.position;
+        Vector2 targetPosition = startPosition + Vector2.up * 0.75f;
+
+        if (transform.localScale.x > 0) //right
+        {
+            targetPosition += Vector2.right * 0.5f;
+        }
+        else
+        {
+            targetPosition -= Vector2.right * 0.5f;
+        }
+
+        float duration = climb.length;
+
+        while (time < duration)
+        {
+            transform.position = Vector2.Lerp(startPosition, targetPosition, time / duration);
+            time += Time.deltaTime;
+            yield return null;
+        }
+
+        canWalk = true;
+        canClimb = false;
+        coll.enabled = true;
+        //body.gravityScale = 1f;
     }
 }
