@@ -140,6 +140,14 @@ public class PlayerController : MonoBehaviour
 
         if (!wasCancelled)
         {
+            if (animator.GetBool("IsPushing") && currentBox != null)
+            {
+                currentBox.bodyType = RigidbodyType2D.Static;
+                
+                canClimbLedge = true;
+                animator.SetBool("IsPushing", false);
+                animator.SetInteger("PlayerState", (int)PlayerState.HoldingLedge);
+            }
             if (canWalk && !animator.GetBool("IsCrouching"))
             {
                 if (canClimbLedge)
