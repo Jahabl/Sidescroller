@@ -14,7 +14,7 @@ public class PlayerController : MonoBehaviour
     private Vector2 input = Vector2.zero;
     private string currentGround;
     private bool hasToCrouch;
-    public Vector2 ladderDirection;
+    private Vector2 ladderDirection;
     private bool canClimbLedge;
     private bool canWalk = true;
     private bool isOnLadder;
