@@ -177,7 +177,7 @@ public class PlayerController : MonoBehaviour
             {
                 if (isOnLadder)
                 {
-                    animator.SetInteger("PlayerState", (int)PlayerState.Idling);
+                    animator.SetInteger("PlayerState", (int)PlayerState.ClimbIdling);
                 }
                 else
                 {
