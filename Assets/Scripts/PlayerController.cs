@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -13,7 +14,7 @@ public class PlayerController : MonoBehaviour
     private Vector2 input = Vector2.zero;
     private string currentGround;
     private bool hasToCrouch;
-    public bool canClimbLadder;
+    public int ladderDirection;
     private bool canClimbLedge;
     private bool canWalk = true;
     private bool isOnLadder;
@@ -64,7 +65,7 @@ public class PlayerController : MonoBehaviour
             }
             else if (animator.GetInteger("PlayerState") == (int)PlayerState.Climbing)
             {
-                body.velocity = Vector2.up;
+                body.velocity = new Vector2(0, ladderDirection);
             }
             else
             {
@@ -92,7 +93,11 @@ public class PlayerController : MonoBehaviour
             if (input.x == -1f)
             {
                 input.x = 0f;
-                animator.SetInteger("PlayerState", (int)PlayerState.Idling);
+
+                if (!isOnLadder)
+                {
+                    animator.SetInteger("PlayerState", (int)PlayerState.Idling);
+                }
             }
 
             animator.SetBool("IsPushing", false);
@@ -118,7 +123,11 @@ public class PlayerController : MonoBehaviour
             if (input.x == 1f)
             {
                 input.x = 0f;
-                animator.SetInteger("PlayerState", (int)PlayerState.Idling);
+                
+                if (!isOnLadder)
+                {
+                    animator.SetInteger("PlayerState", (int)PlayerState.Idling);
+                }
             }
 
             animator.SetBool("IsPushing", false);
@@ -138,7 +147,7 @@ public class PlayerController : MonoBehaviour
                     canWalk = false;
                     animator.SetInteger("PlayerState", (int)PlayerState.HoldingLedge);
                 }
-                else if (canClimbLadder)
+                else if (ladderDirection != 0)
                 {
                     canWalk = false;
                     animator.SetInteger("PlayerState", (int)PlayerState.Climbing);
@@ -163,7 +172,7 @@ public class PlayerController : MonoBehaviour
             {
                 StartCoroutine("ClimbLedge");
             }
-            else if (canClimbLadder)
+            else if (ladderDirection != 0)
             {
                 if (isOnLadder)
                 {
@@ -265,7 +274,10 @@ public class PlayerController : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Ladder"))
         {
-            canClimbLadder = true;
+            Vector3 direction = collision.transform.position - transform.position;
+            direction.Normalize();
+            Debug.Log(direction);
+            ladderDirection = Mathf.RoundToInt(direction.y);
         }
         else if (collision.gameObject.CompareTag("Tunnel"))
         {
@@ -277,7 +289,7 @@ public class PlayerController : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Ladder"))
         {
-            canClimbLadder = false;
+            ladderDirection = 0;
             isOnLadder = false;
 
             if (animator.GetInteger("PlayerState") == (int)PlayerState.Climbing)
