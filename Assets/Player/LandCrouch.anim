@@ -26,8 +26,6 @@ AnimationClip:
       value: {fileID: -2110974609, guid: 44ea67a6b4e634506bedb66b8696e254, type: 3}
     - time: 0.33333334
       value: {fileID: 1216589329, guid: 44ea67a6b4e634506bedb66b8696e254, type: 3}
-    - time: 0.5
-      value: {fileID: -1499617942, guid: 44ea67a6b4e634506bedb66b8696e254, type: 3}
     attribute: m_Sprite
     path: 
     classID: 212
@@ -53,13 +51,12 @@ AnimationClip:
     - {fileID: 1869272153, guid: 44ea67a6b4e634506bedb66b8696e254, type: 3}
     - {fileID: -2110974609, guid: 44ea67a6b4e634506bedb66b8696e254, type: 3}
     - {fileID: 1216589329, guid: 44ea67a6b4e634506bedb66b8696e254, type: 3}
-    - {fileID: -1499617942, guid: 44ea67a6b4e634506bedb66b8696e254, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}
     m_AdditiveReferencePoseTime: 0
     m_StartTime: 0
-    m_StopTime: 0.51666665
+    m_StopTime: 0.35000002
     m_OrientationOffsetY: 0
     m_Level: 0
     m_CycleOffset: 0
@@ -86,7 +83,7 @@ AnimationClip:
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 0.5
+  - time: 0.33333334
     functionName: ToggleWalk
     data: 
     objectReferenceParameter: {fileID: 0}

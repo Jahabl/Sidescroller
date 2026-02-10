@@ -194,8 +194,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   body: {fileID: 9120507133042636589}
+  coll: {fileID: 5930980365203207667}
   animator: {fileID: 6771655348957841327}
   climb: {fileID: 7400000, guid: 7466df960b4ca4643a2ce35b57b5ae59, type: 2}
   topSpeed: 3
   bottomSpeed: 1
-  canWalk: 1
