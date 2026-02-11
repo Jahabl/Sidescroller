@@ -254,6 +254,7 @@ public class PlayerController : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Ground"))
         {
+            Debug.Log("AAAAAAAA");
             if (currentGround == collision.collider.name)
             {
                 currentGround = "";
@@ -268,6 +269,7 @@ public class PlayerController : MonoBehaviour
         else if (collision.gameObject.CompareTag("Box"))
         {
             currentBox = null;
+            Debug.Log("BBBBBBBBBBBB");
 
             if (currentGround == collision.collider.name)
             {
