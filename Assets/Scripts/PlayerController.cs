@@ -150,17 +150,17 @@ public class PlayerController : MonoBehaviour
                 currentBox.bodyType = RigidbodyType2D.Static;
                 
                 canClimbLedge = true;
+                canWalk = false;
                 animator.SetBool("IsPushing", false);
                 animator.SetInteger("PlayerState", (int)PlayerState.HoldingLedge);
             }
-            if (canWalk && !animator.GetBool("IsCrouching"))
+            else if (animator.GetInteger("PlayerState") == (int)PlayerState.HoldingLedge)
             {
-                if (canClimbLedge)
-                {
-                    canWalk = false;
-                    animator.SetInteger("PlayerState", (int)PlayerState.HoldingLedge);
-                }
-                else if (ladderDirection.y != 0)
+                StartCoroutine("ClimbLedge");
+            }
+            else if (!animator.GetBool("IsCrouching"))
+            {
+                if (canWalk && ladderDirection.y != 0)
                 {
                     canWalk = false;
                     animator.SetInteger("PlayerState", (int)PlayerState.Climbing);
@@ -169,7 +169,12 @@ public class PlayerController : MonoBehaviour
                     coll.isTrigger = true;
                     isOnLadder = true;
                 }
-                else if (!animator.GetBool("IsPushing"))
+                else if (canClimbLedge)
+                {
+                    canWalk = false;
+                    animator.SetInteger("PlayerState", (int)PlayerState.HoldingLedge);
+                }
+                else if (canWalk && !animator.GetBool("IsPushing"))
                 {
                     canWalk = !hasToCrouch;
                     animator.SetBool("IsCrouching", true);
@@ -286,7 +291,6 @@ public class PlayerController : MonoBehaviour
         {
             if (currentGround == collision.collider.name)
             {
-                Debug.Log("AAAAAAAA");
                 currentGround = "";
                 canWalk = false;
                 animator.SetBool("IsGrounded", canClimbLedge);
@@ -387,10 +391,13 @@ public class PlayerController : MonoBehaviour
 
         while (time < duration)
         {
-            transform.position = Vector2.Lerp(startPosition, targetPosition, time / duration);
+            body.MovePosition(Vector2.Lerp(startPosition, targetPosition, time / duration));
+            //transform.position = Vector2.Lerp(startPosition, targetPosition, time / duration);
             time += Time.deltaTime;
             yield return null;
         }
+
+        body.MovePosition(targetPosition);
 
         canWalk = true;
         canClimbLedge = false;
