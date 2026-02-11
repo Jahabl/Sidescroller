@@ -12,11 +12,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float topSpeed = 3f;
     [SerializeField] private float bottomSpeed = 1f;
     private Vector2 input = Vector2.zero;
-    private string currentGround;
+    public string currentGround;
     private bool hasToCrouch;
     private Vector2 ladderDirection;
-    private bool canClimbLedge;
-    private bool canWalk = true;
+    public bool canClimbLedge;
+    public bool canWalk = true;
     private bool isOnLadder;
 
     private Rigidbody2D currentBox;
@@ -48,6 +48,11 @@ public class PlayerController : MonoBehaviour
         else if (Input.GetKeyUp(KeyCode.X))
         {
             HandleActionInput(true);
+        }
+
+        if (Input.GetKeyUp(KeyCode.R))
+        {
+            Reload();
         }
 
         if (currentGround != "")
@@ -216,6 +221,31 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    public void Reload()
+    {
+        transform.position = Vector2.zero;
+
+        animator.SetInteger("PlayerState", (int)PlayerState.Idling);
+
+        body.gravityScale = 1f;
+        coll.isTrigger = false;
+
+        canWalk = true;
+        canClimbLedge = false;
+        isOnLadder = false;
+
+        animator.SetBool("IsCrouching", false);
+        animator.SetBool("IsPushing", false);
+
+        if (currentBox != null)
+        {
+            currentBox.bodyType = RigidbodyType2D.Dynamic;
+            currentBox = null;
+        }
+
+        transform.parent = null;
+    }
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Ground"))
@@ -256,6 +286,7 @@ public class PlayerController : MonoBehaviour
         {
             if (currentGround == collision.collider.name)
             {
+                Debug.Log("AAAAAAAA");
                 currentGround = "";
                 canWalk = false;
                 animator.SetBool("IsGrounded", canClimbLedge);

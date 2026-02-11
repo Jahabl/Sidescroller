@@ -1,57 +1,18 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Elevator : MonoBehaviour
 {
-    [SerializeField] private float moveSpeed = 3f;
-    [SerializeField] private Vector3 pointA;
-    [SerializeField] private Vector3 pointB;
-    private Vector3 target;
-    private bool isMoving;
+    private PlayerController player;
 
-    private void Update()
-    {
-        if (isMoving)
-        {
-            if (Vector3.Distance(transform.position, target) > 0.1f)
-            {
-                transform.position = Vector3.MoveTowards(transform.position, target, Time.deltaTime * moveSpeed);
-            }
-            else
-            {
-                transform.position = target;
-            }
-        }
-    }
-
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            isMoving = true;
-            collision.gameObject.transform.parent = transform;
-
-            if (transform.position == pointA)
-            {
-                target = pointB;
-                Debug.Log("B");
-            }
-            else
-            {
-                target = pointA;
-                Debug.Log("A");
-            }
-
-            Debug.Log(target);
-        }
-        else
-        {
-            isMoving = false;
+            collision.gameObject.transform.parent = transform.parent;
         }
     }
 
-    private void OnTriggerExit2D(Collider2D collision)
+    private void OnCollisionExit2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
         {
