@@ -225,7 +225,7 @@ public class PlayerController : MonoBehaviour
                 currentGround = collision.collider.name;
                 animator.SetBool("IsGrounded", true);
             }
-            else if (collision.transform.parent != null)
+            else if (collision.transform.parent == null)
             {
                 canClimbLedge = true;
             }
