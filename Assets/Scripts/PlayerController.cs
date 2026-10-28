@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using UnityEngine;
 
@@ -158,6 +157,10 @@ public class PlayerController : MonoBehaviour
             {
                 StartCoroutine("ClimbLedge");
             }
+            else if (isOnLadder)
+            {
+                animator.SetInteger("PlayerState", (int)PlayerState.Climbing);
+            }
             else if (!animator.GetBool("IsCrouching"))
             {
                 if (canWalk && ladderDirection.y != 0)
@@ -179,10 +182,6 @@ public class PlayerController : MonoBehaviour
                     canWalk = !hasToCrouch;
                     animator.SetBool("IsCrouching", true);
                 }
-            }
-            else if (isOnLadder)
-            {
-                animator.SetInteger("PlayerState", (int)PlayerState.Climbing);
             }
         }
         else
