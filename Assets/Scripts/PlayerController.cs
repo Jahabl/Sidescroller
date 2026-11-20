@@ -60,20 +60,20 @@ public class PlayerController : MonoBehaviour
             {
                 if (animator.GetBool("IsPushing") || animator.GetBool("IsCrouching"))
                 {
-                    body.velocity = input * bottomSpeed;
+                    body.linearVelocity = input * bottomSpeed;
                 }
                 else
                 {
-                    body.velocity = input * topSpeed;
+                    body.linearVelocity = input * topSpeed;
                 }
             }
             else if (animator.GetInteger("PlayerState") == (int)PlayerState.Climbing)
             {
-                body.velocity = new Vector2(0, ladderDirection.y);
+                body.linearVelocity = new Vector2(0, ladderDirection.y);
             }
             else
             {
-                body.velocity = Vector2.zero;
+                body.linearVelocity = Vector2.zero;
             }
         }
     }
